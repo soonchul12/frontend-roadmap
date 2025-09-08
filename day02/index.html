@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Day02 - 계산기</title>
+  <meta name="description" content="프론트엔드 로드맵 Day02 JavaScript 계산기" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="calculator">
+    <!-- 계산기 화면 (결과 표시) -->
+    <div class="display">
+      <div class="previous-operand"></div>
+      <div class="current-operand">0</div>
+    </div>
+    
+    <!-- 계산기 버튼들 -->
+    <div class="buttons">
+      <!-- 첫 번째 줄 -->
+      <button class="btn btn-clear">C</button>
+      <button class="btn btn-operator">÷</button>
+      <button class="btn btn-operator">×</button>
+      <button class="btn btn-delete">⌫</button>
+      
+      <!-- 두 번째 줄 -->
+      <button class="btn btn-number">7</button>
+      <button class="btn btn-number">8</button>
+      <button class="btn btn-number">9</button>
+      <button class="btn btn-operator">-</button>
+      
+      <!-- 세 번째 줄 -->
+      <button class="btn btn-number">4</button>
+      <button class="btn btn-number">5</button>
+      <button class="btn btn-number">6</button>
+      <button class="btn btn-operator">+</button>
+      
+      <!-- 네 번째 줄 -->
+      <button class="btn btn-number">1</button>
+      <button class="btn btn-number">2</button>
+      <button class="btn btn-number">3</button>
+      <button class="btn btn-equals" rowspan="2">=</button>
+      
+      <!-- 다섯 번째 줄 -->
+      <button class="btn btn-number btn-zero">0</button>
+      <button class="btn btn-number">.</button>
+    </div>
+  </div>
+  
+  <script src="./script.js"></script>
+</body>
+</html>

@@ -132,3 +132,50 @@ class Calculator {
         calculator.delete();
         calculator.updateDisplay();
     });
+
+    // 키보드 지원
+    document.addEventListener('keydown', (e) => {
+        // 기본 동작 방지 (페이지 스크롤 등)
+        e.preventDefault();
+        
+        // 숫자 키 (0-9)
+        if (e.key >= '0' && e.key <= '9') {
+            calculator.appendNumber(e.key);
+            calculator.updateDisplay();
+        }
+        // 소수점 키
+        else if (e.key === '.') {
+            calculator.appendNumber('.');
+            calculator.updateDisplay();
+        }
+        // 연산자 키
+        else if (e.key === '+' || e.key === '-') {
+            calculator.chooseOperation(e.key);
+            calculator.updateDisplay();
+        }
+        // 곱셈 키 (*)
+        else if (e.key === '*') {
+            calculator.chooseOperation('×');
+            calculator.updateDisplay();
+        }
+        // 나눗셈 키 (/)
+        else if (e.key === '/') {
+            calculator.chooseOperation('÷');
+            calculator.updateDisplay();
+        }
+        // 계산 실행 (Enter, =)
+        else if (e.key === 'Enter' || e.key === '=' || e.code === 'Equal') {
+            calculator.compute();
+            calculator.updateDisplay();
+        }
+        // 초기화 (Escape, c, C)
+        else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+            calculator.clear();
+            calculator.updateDisplay();
+        }
+        // 삭제 (Backspace, Delete)
+        else if (e.key === 'Backspace' || e.key === 'Delete') {
+            calculator.delete();
+            calculator.updateDisplay();
+        }
+    });

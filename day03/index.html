@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>권순철 - 프론트엔드 개발자 포트폴리오</title>
+    <meta name="description" content="프론트엔드 개발자 권순철의 포트폴리오 사이트입니다. JavaScript, React, HTML, CSS를 활용한 프로젝트들을 확인해보세요." />
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <!-- 네비게이션 -->
+     <nav class="navbar">
+        <div class="container">
+            <a href="#home" class="nav-logo">권순철</a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">홈</a></li>
+                <li><a href="#about" class="nav-link">소개</a></li>
+                <li><a href="#projects" class="nav-link">프로젝트</a></li>
+                <li><a href="#skills" class="nav-link">기술</a></li>
+                <li><a href="#contact" class="nav-link">연락</a></li>
+            </ul>
+        </div>
+     </nav>
+
+    <!-- 메인 컨텐츠 -->
+    <main>
+        <!-- 헤로 섹션 -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>안녕하세요!<br>권순철입니다</h1>
+                <p>프론트엔드 개발자가 되기 위해 매일 학습하고 있는 개발자입니다.<br>
+                사용자 경험을 중시하며, 깔끔하고 효율적인 코드를 작성하는 것을 목표로 합니다.</p>
+                <a href="#projects" class="cta-button">프로젝트 보기</a>
+            </div>
+        </section>
+
+        <!-- 프로젝트 섹션 -->
+        <section id="projects" class="section">
+            <h2>프로젝트</h2>
+            <div class="projects-grid">
+                <!-- Day01 프로젝트 -->
+                <div class="project-card">
+                    <h3>자기소개 페이지</h3>
+                    <p>HTML과 CSS를 활용한 반응형 자기소개 페이지입니다. 다크 테마와 모던한 디자인으로 제작되었습니다.</p>
+                    <div class="project-links">
+                        <a href="../day01/index.html" class="project-link primary" target="_blank">라이브 데모</a>
+                        <a href="https://github.com/soonchul12/frontend-roadmap" class="project-link secondary" target="_blank">GitHub</a>
+                    </div>
+                </div>
+
+                <!-- Day02 프로젝트 -->
+                <div class="project-card">
+                    <h3>JavaScript 계산기</h3>
+                    <p>바닐라 JavaScript로 구현한 계산기입니다. 키보드 지원, 반응형 디자인, 클래스 기반 구조로 제작되었습니다.</p>
+                    <div class="project-links">
+                        <a href="../day02/index.html" class="project-link primary" target="_blank">라이브 데모</a>
+                        <a href="https://github.com/soonchul12/frontend-roadmap" class="project-link secondary" target="_blank">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 스킬 섹션 -->
+        <section id="skills" class="section">
+            <h2>기술 스택</h2>
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <div class="skill-icon">🌐</div>
+                    <h3>HTML5</h3>
+                    <p>시맨틱 마크업</p>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">🎨</div>
+                    <h3>CSS3</h3>
+                    <p>반응형 디자인</p>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">⚡</div>
+                    <h3>JavaScript</h3>
+                    <p>ES6+ 문법</p>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">📱</div>
+                    <h3>반응형</h3>
+                    <p>모바일 최적화</p>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">🔧</div>
+                    <h3>Git</h3>
+                    <p>버전 관리</p>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-icon">🚀</div>
+                    <h3>Vercel</h3>
+                    <p>배포</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 연락처 섹션 -->
+            <section id="contact" class="section">
+                <div class="contact">
+                    <h2>연락하기</h2>
+                    <p>프로젝트 협업이나 문의사항이 있으시면 언제든 연락해주세요!</p>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span>📧</span>
+                            <a href="mailto:yeyiyeyi@naver.com">yeyiyeyi@naver.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <span>🐙</span>
+                            <a href="https://github.com/soonchul12" target="_blank">GitHub</a>
+                        </div>
+                        <div class="contact-item">
+                            <span>💼</span>
+                            <a href="#" target="_blank">?</a>
+                    </div>
+                </div>
+            </div>
+            </section> 
+
+            <!-- 푸터 -->
+            <footer class="footer">
+                <small>© <span id="year"></span> 권순철. All rights reserved.</small>
+            </footer>
+    </main>
+
+    <script src="./script.js"></script>
+</body>
+</html>

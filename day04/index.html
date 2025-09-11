@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day04 - Todo 앱</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+         <header class="header">
+            <h1>Todo 앱</h1>
+            <p>할 일을 관리하고 생산성을 높여보세요!</p>
+         </header>
+
+         <!-- 입력 폼 -->
+          <form class="todo-form" id="todoForm">
+            <div class="input-group">
+                <input type="text" id="todoInput" placeholder="할 일을 입력하세요" required>
+                <button type="submit" class="add-btn">추가</button>
+            </div>
+          </form>
+
+          <!-- 필터 버튼 -->
+           <div class="filters">
+            <button class="filter-btn active" data-filter="all">전체</button>
+            <button class="filter-btn" data-filter="active">미완료</button>
+            <button class="filter-btn" data-filter="completed">완료</button>
+           </div>
+
+           <!-- 할 일 목록 -->
+            <div class="todo-list" id="todoList">
+
+            </div>
+
+            <!-- 통계 -->
+             <div class="stats">
+                <span class="total-count">전체: <span id="totalCount">0</span></span>
+                <span class="active-count">미완료: <span id="activeCount">0</span></span>
+                <span class="completed-count">완료: <span id="completedCount">0</span></span>
+             </div>
+
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+/* 기본 세팅 */
+* {
+    box-sizing: border-box; /* 패딩과 보더를 포함한 크기 계산 */
+    margin: 0;
+    padding: 0;
+}
+
+/* CSS 변수 정의 - 색상과 크기를 한 곳에서 관리 */
+:root {
+    --bg: #0f172a;          /* 배경색 (다크 블루) */
+    --card: #111827;        /* 카드 배경색 (더 어두운 그레이) */
+    --text: #e5e7eb;        /* 텍스트 색상 (밝은 그레이) */
+    --muted: #94a3b8;       /* 보조 텍스트 색상 (회색) */
+    --primary: #3b82f6;     /* 주요 색상 (파란색) */
+    --success: #10b981;     /* 성공 색상 (초록색) */
+    --danger: #ef4444;      /* 위험 색상 (빨간색) */
+    --warning: #f59e0b;     /* 경고 색상 (주황색) */
+    --radius: 12px;         /* 모서리 둥글기 */
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 */
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--text), var(--primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.todo-form {
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#todoInput {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid rgba(148,163,184,0.2);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--text);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#todoInput:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.add-btn {
+    padding: 1rem 1.5rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+    background: #2563eb;
+    transform: translateX(-2px);
+    box-shadow: var(--shadow);
+}
+
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: var(--card);
+    color: var(--muted);
+    border: 2px solid rgba(148, 163, 184, 0.2);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.todo-item {
+    background: var(--card);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    animation: slideIn 0.5s ease;
+}
+
+.todo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+}
+
+.todo-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+}
+
+.todo-text {
+    flex: 1;
+    font-size: 1rem;
+    word-break: break-all;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.edit-btn {
+    background: var(--warning);
+    color: white;
+}
+
+.edit-btn:hover {
+    background: #d97706;
+    transform: scale(1.05);
+}
+
+.delete-btn {
+    background: var(--danger);
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+    transform: scale(1.05);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    background: var(--card);
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.stats span {
+    font-weight: 600;
+    color: var(--text);
+}
+
+#totalCount {
+    color: var(--text);
+}
+
+#activeCount {
+    color: var(--warning);
+}
+
+#completedCount {
+    color: var(--success);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}

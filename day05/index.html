@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day05 - 날씨 앱</title>
+    <meta name="description" content="프론트엔드 로드맵 Day05 JavaScript 날씨 앱" />
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <h1>🌤️ 날씨 앱</h1>
+            <p>현재 날씨와 5일 예보를 확인하세요!</p>
+        </header>
+
+        <!-- 검색 폼 -->
+        <form class="search-form" id="searchForm">
+            <div class="search-group">
+                <input type="text" id="cityInput" placeholder="도시명을 입력하세요..." required>
+                <button type="submit" class="search-btn">검색</button>
+            </div>
+        </form>
+
+        <!-- 로딩 스피너 -->
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>날씨 정보를 가져오는 중...</p>
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div class="error" id="error" style="display: none;">
+            <p>도시를 찾을 수 없습니다. 다시 시도해주세요.</p>
+        </div>
+
+        <!-- 현재 날씨 -->
+        <section class="current-weather" id="currentWeather" style="display: none;">
+            <div class="weather-card">
+                <div class="weather-header">
+                    <h2 id="currentCity">도시명</h2>
+                    <p id="currentDate">날짜</p>
+                </div>
+                <div class="weather-main">
+                    <div class="weather-icon">
+                        <img id="currentIcon" src="" alt="날씨 아이콘">
+                    </div>
+                    <div class="weather-info">
+                        <div class="temperature">
+                            <span id="currentTemp">0</span>
+                            <span class="unit">°C</span>
+                        </div>
+                        <div class="description">
+                            <p id="currentDesc">날씨 설명</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <span class="label">체감온도</span>
+                        <span class="value" id="currentFeelsLike">0°C</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">습도</span>
+                        <span class="value" id="currentHumidity">0%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">풍속</span>
+                        <span class="value" id="currentWindSpeed">0 m/s</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">기압</span>
+                        <span class="value" id="currentPressure">0 hPa</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5일 예보 -->
+        <section class="forecast" id="forecast" style="display: none;">
+            <h2>5일 예보</h2>
+            <div class="forecast-list" id="forecastList">
+                <!-- 예보 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </section>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>

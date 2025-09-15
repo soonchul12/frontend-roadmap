@@ -1,0 +1,321 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0f172a;
+    --card: #111827;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --primary: #3b82f6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --radius: 16px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header p {
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+.search-form {
+    margin-bottom: 2rem;
+}
+
+.search-group {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#cityInput {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid rgba(148,163,184,0.2);
+    border-radius: var(--radius);
+    background: var(--card);
+    color: var(--text);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#cityInput:focus {
+    outline: navajowhite;
+    border-color: var(--primary);
+}
+
+.search-btn {
+    padding: 1rem 1.5rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(59,130,246,0.2);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+
+.loading p {
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+.error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--danger);
+    border-radius: var(--radius);
+    padding: 1rem;
+    text-align: center;
+    color: var(--danger);
+    margin-bottom: 2rem;
+}
+
+.current-weather {
+    margin-bottom: 2rem;
+}
+
+.weather-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(148,163,184,0.1);
+    transition: all 0.3s ease;
+}
+
+.weather-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.weather-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.weather-header h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.weather-header p {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+.weather-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.weather-icon img {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.weather-info {
+    text-align: center;
+}
+
+.temperature {
+    font-size: 3rem;
+    font-weight: 700;
+    columns: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.unit {
+    font-size: 1.5rem;
+    color:var(--muted);
+}
+
+.description p {
+    font-size: 1.2rem;
+    color: var(--muted);
+    text-transform: capitalize;
+}
+
+.weather-details {
+    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    justify-content: center;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background: rgba(148,163,184,0.05);
+    border-radius: 8px;
+}
+
+.detail-item .label {
+    columns: var(--muted);
+    font-size: 0.9rem;
+}
+
+.detail-item .value {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.forecast {
+    margin-bottom: 2rem;
+}
+
+.forecast h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    columns: var(--text);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.forecast-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.forecast-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(148,163,184,0.1);
+    transition: all 0.3s ease;
+}
+
+.forecast-item:hover {
+    transform: translateY(-2px);
+    box-sizing: var(--shadow);
+    border-color: var(--primary);
+}
+
+.forecast-date {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.forecast-icon img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+.forecast-temp {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+}
+
+.forecast-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    text-transform: capitalize;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;                        /* 모바일에서 여백 줄이기 */
+    }
+    
+    .header h1 {
+        font-size: 2rem;                      /* 모바일에서 제목 크기 줄이기 */
+    }
+    
+    .search-group {
+        flex-direction: column;               /* 모바일에서 세로 배치 */
+    }
+    
+    .weather-main {
+        flex-direction: column;               /* 모바일에서 세로 배치 */
+        gap: 1rem;                            /* 요소 간 간격 줄이기 */
+    }
+    
+    .temperature {
+        font-size: 2.5rem;                    /* 모바일에서 온도 크기 줄이기 */
+    }
+    
+    .weather-details {
+        grid-template-columns: 1fr;           /* 모바일에서 1열 그리드 */
+    }
+    
+    .forecast-list {
+        grid-template-columns: 1fr;           /* 모바일에서 1열 그리드 */
+    }
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day06 - 쇼핑몰 상품 목록</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>온라인 쇼핑몰</h1>
+            <p>다양한 상품을 만나보세요!</p>
+        </header>
+
+        <section class="search-filter">
+            <div class="search-bar">
+                <input type="test" id="searchInput" placeholder="상품 검색">
+                <button id="searchBtn">검색</button>
+            </div>
+
+            <div class="filters">
+                <select id="categoryFilter">
+                    <option value="">전체 카테고리</option>
+                    <option value="electronics">전자제품</option>
+                    <option value="clothing">의류</option>
+                    <option value="books">도서</option>
+                    <option value="home">홈&리빙</option>
+                    <option value="sports">스포츠</option>
+                </select>
+
+                <select id="priceFilter">
+                    <option value="">전체 가격</option>
+                    <option value="0-10000">1만원 이하</option>
+                    <option value="10000-50000">1만원 - 5만원</option>
+                    <option value="50000-100000">10만원 이상</option>
+                    <option value="100000-999999">10만원 이상</option>
+                </select>
+
+                <select id="sortFilter">
+                    <option value="default">기본순</option>
+                    <option value="price-low">가격 낮은순</option>
+                    <option value="price-high">가격 높은순</option>
+                    <option value="name">이름순</option>
+                    <option value="rating">평점순</option>
+                </select>
+            </div>
+        </section>
+
+        <div class="cart-section">
+            <button class="cart-btn" id="cartBtn">장바구니 <span id="cartCount">0</span>
+            </button>
+            <div class="cart-dropdown" id="cartDropdown">
+                <div class="cart-item" id="cartItems">
+                    <p class="empty-cart">장바구니가 비었습니다.</p>
+                </div>
+                <div class="cart-total">
+                    <p>총 금액: <span id="cartTotal">0</span></p>
+                    <button class="checkout-btn">구매하기</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="products-section">
+            <div class="products-header">
+                <h2>상품 목록</h2>
+                <p id="productCount">총 0개의 상품</p>></p>
+            </div>
+
+            <div class="products-grid" id="productsGrid">
+
+            </div>
+        </section>
+
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>상품을 불러오는 중...</p>
+        </div>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>

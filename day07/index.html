@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyTracker - 스마트 가계부</title>
+    <meta name="description" content="스마트하고 직관적인 가계부 앱으로 돈을 효율적으로 관리하세요">
+    
+    <!-- PWA 설정 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MoneyTracker">
+    
+    <!-- 아이콘 -->
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
+    
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">💰</span>
+                    <h1>MoneyTracker</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="themeToggle">🌙</button>
+                    <button class="settings-btn" id="settingsBtn">⚙️</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 대시보드 -->
+        <main class="main-content">
+            <!-- 잔액 카드 -->
+            <section class="balance-card">
+                <div class="balance-info">
+                    <h2>총 자산</h2>
+                    <div class="balance-amount" id="totalBalance">₩0</div>
+                    <div class="balance-breakdown">
+                        <span class="income">수입: <span id="totalIncome">₩0</span></span>
+                        <span class="expense">지출: <span id="totalExpense">₩0</span></span>
+                    </div>
+                </div>
+                <div class="balance-chart" id="balanceChart">
+                    <canvas id="balanceCanvas"></canvas>
+                </div>
+            </section>
+
+            <!-- 빠른 액션 버튼 -->
+            <section class="quick-actions">
+                <button class="action-btn income-btn" id="addIncomeBtn">
+                    <span class="btn-icon">📈</span>
+                    <span>수입 추가</span>
+                </button>
+                <button class="action-btn expense-btn" id="addExpenseBtn">
+                    <span class="btn-icon">📉</span>
+                    <span>지출 추가</span>
+                </button>
+                <button class="action-btn transfer-btn" id="addTransferBtn">
+                    <span class="btn-icon">🔄</span>
+                    <span>이체</span>
+                </button>
+            </section>
+
+            <!-- 최근 거래 내역 -->
+            <section class="recent-transactions">
+                <div class="section-header">
+                    <h3>최근 거래</h3>
+                    <button class="view-all-btn" id="viewAllBtn">전체보기</button>
+                </div>
+                <div class="transactions-list" id="transactionsList">
+                    <!-- 거래 내역이 여기에 동적으로 생성됩니다 -->
+                </div>
+            </section>
+
+            <!-- 카테고리별 지출 -->
+            <section class="category-spending">
+                <h3>카테고리별 지출</h3>
+                <div class="category-chart" id="categoryChart">
+                    <canvas id="categoryCanvas"></canvas>
+                </div>
+            </section>
+
+            <!-- 월별 통계 -->
+            <section class="monthly-stats">
+                <h3>이번 달 통계</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">총 수입</div>
+                        <div class="stat-value income" id="monthlyIncome">₩0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">총 지출</div>
+                        <div class="stat-value expense" id="monthlyExpense">₩0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">순이익</div>
+                        <div class="stat-value" id="monthlyNet">₩0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">거래 횟수</div>
+                        <div class="stat-value" id="transactionCount">0</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-tab="dashboard">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">대시보드</span>
+            </button>
+            <button class="nav-item" data-tab="transactions">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">거래내역</span>
+            </button>
+            <button class="nav-item" data-tab="analytics">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">분석</span>
+            </button>
+            <button class="nav-item" data-tab="goals">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-label">목표</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- 거래 추가 모달 -->
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">거래 추가</h3>
+                <button class="close-btn" id="closeModal">×</button>
+            </div>
+            <form class="transaction-form" id="transactionForm">
+                <div class="form-group">
+                    <label for="transactionType">거래 유형</label>
+                    <select id="transactionType" name="transactionType" required>
+                        <option value="income">수입</option>
+                        <option value="expense">지출</option>
+                        <option value="transfer">이체</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="amount">금액</label>
+                    <input type="number" id="amount" name="amount" placeholder="금액을 입력하세요" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">카테고리</label>
+                    <select id="category" name="category" required>
+                        <!-- 카테고리 옵션들이 동적으로 생성됩니다 -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">설명</label>
+                    <input type="text" id="description" name="description" placeholder="거래 설명을 입력하세요">
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">날짜</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group" id="accountGroup" style="display: none;">
+                    <label for="account">계좌</label>
+                    <select id="account" name="account">
+                        <option value="cash">현금</option>
+                        <option value="bank">은행</option>
+                        <option value="card">카드</option>
+                    </select>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">취소</button>
+                    <button type="submit" class="btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 설정 모달 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>설정</h3>
+                <button class="close-btn" id="closeSettingsModal">×</button>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>다크 모드</label>
+                    <input type="checkbox" id="darkModeToggle">
+                </div>
+                <div class="setting-item">
+                    <label>통화</label>
+                    <select id="currencySelect">
+                        <option value="KRW">원 (₩)</option>
+                        <option value="USD">달러 ($)</option>
+                        <option value="EUR">유로 (€)</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>데이터 백업</label>
+                    <button class="btn-secondary" id="exportBtn">내보내기</button>
+                    <button class="btn-secondary" id="importBtn">가져오기</button>
+                </div>
+                <div class="setting-item">
+                    <label>앱 정보</label>
+                    <p>MoneyTracker v1.0.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 로딩 스피너 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 알림 토스트 -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="./script.js"></script>
+</body>
+</html>

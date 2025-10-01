@@ -625,10 +625,7 @@ body {
 }
 
 .setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
+    padding: 20px 0;
     border-bottom: 1px solid var(--gray-200);
 }
 
@@ -636,8 +633,16 @@ body {
     border-bottom: none;
 }
 
+.setting-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .setting-item label {
     font-size: 16px;
+    font-weight: 600;
     color: var(--gray-700);
 }
 
@@ -678,6 +683,85 @@ body {
     border-radius: 6px;
     background: var(--white);
     color: var(--gray-700);
+}
+
+/* 데이터 백업 섹션 */
+.backup-section {
+    background: var(--gray-100);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.backup-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.backup-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.backup-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.backup-btn.export {
+    background: var(--success-color);
+    color: var(--white);
+}
+
+.backup-btn.export:hover {
+    background: #218838;
+    transform: translateY(-2px);
+}
+
+.backup-btn.import {
+    background: var(--info-color);
+    color: var(--white);
+}
+
+.backup-btn.import:hover {
+    background: #138496;
+    transform: translateY(-2px);
+}
+
+.backup-btn-icon {
+    font-size: 16px;
+}
+
+/* 앱 정보 섹션 */
+.app-info {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    border-radius: var(--border-radius);
+    margin-top: 10px;
+}
+
+.app-info h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.app-info p {
+    font-size: 14px;
+    opacity: 0.9;
 }
 
 /* 로딩 */

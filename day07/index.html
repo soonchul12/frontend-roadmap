@@ -197,25 +197,48 @@
             </div>
             <div class="settings-content">
                 <div class="setting-item">
-                    <label>다크 모드</label>
-                    <input type="checkbox" id="darkModeToggle">
+                    <div class="setting-item-header">
+                        <label>다크 모드</label>
+                        <input type="checkbox" id="darkModeToggle">
+                    </div>
                 </div>
+                
                 <div class="setting-item">
-                    <label>통화</label>
-                    <select id="currencySelect">
-                        <option value="KRW">원 (₩)</option>
-                        <option value="USD">달러 ($)</option>
-                        <option value="EUR">유로 (€)</option>
-                    </select>
+                    <div class="setting-item-header">
+                        <label>통화</label>
+                        <select id="currencySelect">
+                            <option value="KRW">원 (₩)</option>
+                            <option value="USD">달러 ($)</option>
+                            <option value="EUR">유로 (€)</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div class="setting-item">
                     <label>데이터 백업</label>
-                    <button class="btn-secondary" id="exportBtn">내보내기</button>
-                    <button class="btn-secondary" id="importBtn">가져오기</button>
+                    <div class="backup-section">
+                        <div class="backup-description">
+                            거래 내역과 설정을 백업하거나 다른 기기로 가져올 수 있습니다.
+                        </div>
+                        <div class="backup-buttons">
+                            <button class="backup-btn export" id="exportBtn">
+                                <span class="backup-btn-icon">📤</span>
+                                내보내기
+                            </button>
+                            <button class="backup-btn import" id="importBtn">
+                                <span class="backup-btn-icon">📥</span>
+                                가져오기
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="setting-item">
-                    <label>앱 정보</label>
-                    <p>MoneyTracker v1.0.0</p>
+                    <div class="app-info">
+                        <h4>💰 MoneyTracker</h4>
+                        <p>스마트 가계부 v1.0.0</p>
+                        <p>당신의 돈 관리를 더 스마트하게</p>
+                    </div>
                 </div>
             </div>
         </div>

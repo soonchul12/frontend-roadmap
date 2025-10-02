@@ -44,6 +44,14 @@ class MoneyTracker {
         document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
         document.getElementById('darkModeToggle').addEventListener('change', (e) => this.toggleDarkMode(e.target.checked));
 
+        // 전체 거래 내역 관련
+        document.getElementById('viewAllBtn').addEventListener('click', () => this.openAllTransactionsModal());
+        document.getElementById('closeAllTransactionsModal').addEventListener('click', () => this.closeAllTransactionsModal());
+        document.getElementById('filterType').addEventListener('change', () => this.filterAllTransactions());
+        document.getElementById('filterCategory').addEventListener('change', () => this.filterAllTransactions());
+        document.getElementById('filterMonth').addEventListener('change', () => this.filterAllTransactions());
+        document.getElementById('clearFilters').addEventListener('click', () => this.clearAllFilters());
+
         // 네비게이션
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => this.handleNavigation(e.target.closest('.nav-item')));
@@ -356,22 +364,52 @@ class MoneyTracker {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        
+        // 컨테이너 크기에 맞게 캔버스 크기 설정
+        const container = canvas.parentElement;
+        const containerRect = container.getBoundingClientRect();
+        
+        // 패딩을 고려한 실제 사용 가능한 크기
+        const availableWidth = containerRect.width - 40; // 좌우 패딩 20px씩
+        const availableHeight = containerRect.height - 40; // 상하 패딩 20px씩
+        
+        // 정사각형으로 만들기 (원형 차트를 위해)
+        const size = Math.min(availableWidth, availableHeight);
+        
+        // 고해상도 디스플레이 지원
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        
+        canvas.width = size * devicePixelRatio;
+        canvas.height = size * devicePixelRatio;
+        
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+        
+        // CSS로 실제 표시 크기 설정
+        canvas.style.width = size + 'px';
+        canvas.style.height = size + 'px';
 
         const total = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
-        if (total === 0) return;
+        if (total === 0) {
+            // 빈 차트 메시지
+            ctx.fillStyle = '#666';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('지출 데이터가 없습니다', size / 2, size / 2);
+            return;
+        }
 
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = Math.min(centerX, centerY) - 20;
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const radius = size / 2 - 20; // 여백 고려
 
         let currentAngle = 0;
         const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
         Object.entries(categoryTotals).forEach(([category, amount], index) => {
             const sliceAngle = (amount / total) * 2 * Math.PI;
+            const midAngle = currentAngle + sliceAngle / 2;
             
+            // 파이 슬라이스 그리기
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
             ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
@@ -379,9 +417,43 @@ class MoneyTracker {
             ctx.fillStyle = colors[index % colors.length];
             ctx.fill();
 
+            // 텍스트 위치 계산 (슬라이스가 충분히 클 때만 텍스트 표시)
+            if (sliceAngle > 0.3) { // 최소 각도 체크
+                const textRadius = radius * 0.6;
+                const textX = centerX + Math.cos(midAngle) * textRadius;
+                const textY = centerY + Math.sin(midAngle) * textRadius;
+
+                // 텍스트 스타일 설정
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // 텍스트 그림자 효과
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowBlur = 2;
+                ctx.shadowOffsetX = 1;
+                ctx.shadowOffsetY = 1;
+
+                // 카테고리명 표시
+                ctx.fillText(category, textX, textY - 6);
+
+                // 금액 표시
+                ctx.font = 'bold 9px Arial';
+                const formattedAmount = this.formatCurrency(amount);
+                ctx.fillText(formattedAmount, textX, textY + 6);
+
+                // 그림자 효과 초기화
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            }
+
             currentAngle += sliceAngle;
         });
     }
+
 
     // 유틸리티 함수들
     getTotalAmount(type) {
@@ -423,6 +495,16 @@ class MoneyTracker {
         });
     }
 
+    formatFullDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            weekday: 'short'
+        });
+    }
+
     // 모달 관리
     closeModal() {
         document.getElementById('transactionModal').classList.remove('show');
@@ -435,6 +517,143 @@ class MoneyTracker {
 
     closeSettingsModal() {
         document.getElementById('settingsModal').classList.remove('show');
+    }
+
+    // 전체 거래 내역 모달 관리
+    openAllTransactionsModal() {
+        this.setupAllTransactionsFilters();
+        this.updateAllTransactionsList();
+        this.updateAllTransactionsSummary();
+        document.getElementById('allTransactionsModal').classList.add('show');
+    }
+
+    closeAllTransactionsModal() {
+        document.getElementById('allTransactionsModal').classList.remove('show');
+    }
+
+    // 전체 거래 내역 필터 설정
+    setupAllTransactionsFilters() {
+        // 카테고리 필터 설정
+        const categoryFilter = document.getElementById('filterCategory');
+        const allCategories = [...new Set(this.transactions.map(t => t.category))];
+        
+        categoryFilter.innerHTML = '<option value="">전체 카테고리</option>';
+        allCategories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categoryFilter.appendChild(option);
+        });
+
+        // 월별 필터 설정
+        const monthFilter = document.getElementById('filterMonth');
+        const months = [...new Set(this.transactions.map(t => {
+            const date = new Date(t.date);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        }))].sort().reverse();
+
+        monthFilter.innerHTML = '<option value="">전체 기간</option>';
+        months.forEach(month => {
+            const option = document.createElement('option');
+            option.value = month;
+            const [year, monthNum] = month.split('-');
+            option.textContent = `${year}년 ${monthNum}월`;
+            monthFilter.appendChild(option);
+        });
+    }
+
+    // 전체 거래 내역 목록 업데이트
+    updateAllTransactionsList() {
+        const container = document.getElementById('allTransactionsList');
+        const filteredTransactions = this.getFilteredTransactions();
+
+        if (filteredTransactions.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 40px 20px;">
+                    <div class="empty-state-icon">📊</div>
+                    <h3>거래 내역이 없습니다</h3>
+                    <p>필터 조건에 맞는 거래가 없습니다.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filteredTransactions.map(transaction => `
+            <div class="transaction-item">
+                <div class="transaction-icon ${transaction.type}">
+                    ${this.getTransactionIcon(transaction.type)}
+                </div>
+                <div class="transaction-details">
+                    <div class="transaction-category">${transaction.category}</div>
+                    <div class="transaction-description">${transaction.description || '설명 없음'}</div>
+                    <div class="transaction-date">${this.formatFullDate(transaction.date)}</div>
+                </div>
+                <div class="transaction-amount ${transaction.type}">
+                    ${transaction.type === 'expense' ? '-' : '+'}${this.formatCurrency(transaction.amount)}
+                </div>
+                <div class="transaction-actions">
+                    <button class="edit-btn" onclick="moneyTracker.editTransaction(${transaction.id})" title="수정">
+                        ✏️
+                    </button>
+                    <button class="delete-btn" onclick="moneyTracker.deleteTransaction(${transaction.id})" title="삭제">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 필터링된 거래 목록 가져오기
+    getFilteredTransactions() {
+        const typeFilter = document.getElementById('filterType').value;
+        const categoryFilter = document.getElementById('filterCategory').value;
+        const monthFilter = document.getElementById('filterMonth').value;
+
+        return this.transactions.filter(transaction => {
+            const matchesType = !typeFilter || transaction.type === typeFilter;
+            const matchesCategory = !categoryFilter || transaction.category === categoryFilter;
+            
+            let matchesMonth = true;
+            if (monthFilter) {
+                const transactionDate = new Date(transaction.date);
+                const transactionMonth = `${transactionDate.getFullYear()}-${String(transactionDate.getMonth() + 1).padStart(2, '0')}`;
+                matchesMonth = transactionMonth === monthFilter;
+            }
+
+            return matchesType && matchesCategory && matchesMonth;
+        });
+    }
+
+    // 전체 거래 내역 필터링
+    filterAllTransactions() {
+        this.updateAllTransactionsList();
+        this.updateAllTransactionsSummary();
+    }
+
+    // 필터 초기화
+    clearAllFilters() {
+        document.getElementById('filterType').value = '';
+        document.getElementById('filterCategory').value = '';
+        document.getElementById('filterMonth').value = '';
+        this.updateAllTransactionsList();
+        this.updateAllTransactionsSummary();
+    }
+
+    // 전체 거래 내역 요약 업데이트
+    updateAllTransactionsSummary() {
+        const filteredTransactions = this.getFilteredTransactions();
+        
+        const totalCount = filteredTransactions.length;
+        const totalIncome = filteredTransactions
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + t.amount, 0);
+        const totalExpense = filteredTransactions
+            .filter(t => t.type === 'expense')
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        document.getElementById('totalTransactionsCount').textContent = totalCount;
+        document.getElementById('totalTransactionsIncome').textContent = this.formatCurrency(totalIncome);
+        document.getElementById('totalTransactionsExpense').textContent = this.formatCurrency(totalExpense);
     }
 
     // 테마 관리

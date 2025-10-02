@@ -188,6 +188,59 @@
         </div>
     </div>
 
+    <!-- 전체 거래 내역 모달 -->
+    <div class="modal" id="allTransactionsModal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3>전체 거래 내역</h3>
+                <button class="close-btn" id="closeAllTransactionsModal">×</button>
+            </div>
+            <div class="all-transactions-content">
+                <!-- 필터 섹션 -->
+                <div class="transactions-filter">
+                    <div class="filter-group">
+                        <select id="filterType">
+                            <option value="">전체 유형</option>
+                            <option value="income">수입</option>
+                            <option value="expense">지출</option>
+                            <option value="transfer">이체</option>
+                        </select>
+                        <select id="filterCategory">
+                            <option value="">전체 카테고리</option>
+                        </select>
+                        <select id="filterMonth">
+                            <option value="">전체 기간</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-secondary" id="clearFilters">필터 초기화</button>
+                    </div>
+                </div>
+                
+                <!-- 거래 목록 -->
+                <div class="all-transactions-list" id="allTransactionsList">
+                    <!-- 전체 거래 내역이 여기에 동적으로 생성됩니다 -->
+                </div>
+                
+                <!-- 통계 요약 -->
+                <div class="transactions-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">총 거래 수</span>
+                        <span class="summary-value" id="totalTransactionsCount">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">총 수입</span>
+                        <span class="summary-value income" id="totalTransactionsIncome">₩0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">총 지출</span>
+                        <span class="summary-value expense" id="totalTransactionsExpense">₩0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 설정 모달 -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">

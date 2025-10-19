@@ -1,3 +1,4 @@
+
 // 가계부 앱 데이터 관리
 class MoneyTracker {
     constructor() {
@@ -398,6 +399,46 @@ class MoneyTracker {
             return;
         }
 
+        // 전체 100% 기준으로 비율 재분배 (최소 7% 보장)
+        const categories = Object.entries(categoryTotals);
+        const adjustedCategories = {};
+        
+        const minRatio = 0.07; // 최소 7%
+        
+        // 1단계: 원래 비율 계산
+        const originalRatios = {};
+        categories.forEach(([category, amount]) => {
+            originalRatios[category] = amount / total;
+        });
+        
+        // 2단계: 최소 비율 미만인 카테고리들을 7%로 설정
+        const smallCategories = [];
+        const largeCategories = [];
+        
+        categories.forEach(([category, amount]) => {
+            if (originalRatios[category] < minRatio) {
+                adjustedCategories[category] = total * minRatio;
+                smallCategories.push(category);
+            } else {
+                largeCategories.push(category);
+            }
+        });
+        
+        // 3단계: 큰 카테고리들이 차지할 수 있는 남은 비율 계산
+        const remainingRatio = 1 - (smallCategories.length * minRatio);
+        
+        // 4단계: 큰 카테고리들의 원래 비율 합계 계산
+        const largeCategoriesTotalRatio = largeCategories.reduce((sum, category) => {
+            return sum + originalRatios[category];
+        }, 0);
+        
+        // 5단계: 큰 카테고리들을 남은 비율에 맞게 재분배
+        largeCategories.forEach(category => {
+            const originalRatio = originalRatios[category];
+            const adjustedRatio = (originalRatio / largeCategoriesTotalRatio) * remainingRatio;
+            adjustedCategories[category] = total * adjustedRatio;
+        });
+
         const centerX = size / 2;
         const centerY = size / 2;
         const radius = size / 2 - 20; // 여백 고려
@@ -405,7 +446,7 @@ class MoneyTracker {
         let currentAngle = 0;
         const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
 
-        Object.entries(categoryTotals).forEach(([category, amount], index) => {
+        Object.entries(adjustedCategories).forEach(([category, amount], index) => {
             const sliceAngle = (amount / total) * 2 * Math.PI;
             const midAngle = currentAngle + sliceAngle / 2;
             
@@ -418,30 +459,38 @@ class MoneyTracker {
             ctx.fill();
 
             // 텍스트 위치 계산 (슬라이스가 충분히 클 때만 텍스트 표시)
-            if (sliceAngle > 0.3) { // 최소 각도 체크
-                const textRadius = radius * 0.6;
+            const sliceRatio = sliceAngle / (2 * Math.PI);
+            if (sliceRatio > 0.05) { // 최소 5% 이상일 때 텍스트 표시
+                // 텍스트 위치를 슬라이스 중앙에 배치
+                const textRadius = radius * 0.6; // 차트 중심에서 60% 위치
                 const textX = centerX + Math.cos(midAngle) * textRadius;
                 const textY = centerY + Math.sin(midAngle) * textRadius;
+                
+                // 반응형 폰트 크기 계산
+                const baseFontSize = Math.max(8, Math.min(12, size / 30));
+                const smallFontSize = Math.max(6, Math.min(9, size / 40));
 
                 // 텍스트 스타일 설정
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 11px Arial';
+                ctx.font = `bold ${baseFontSize}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 
                 // 텍스트 그림자 효과
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
                 ctx.shadowBlur = 2;
                 ctx.shadowOffsetX = 1;
                 ctx.shadowOffsetY = 1;
 
                 // 카테고리명 표시
-                ctx.fillText(category, textX, textY - 6);
+                const textSpacing = Math.max(3, size / 60);
+                ctx.fillText(category, textX, textY - textSpacing);
 
-                // 금액 표시
-                ctx.font = 'bold 9px Arial';
-                const formattedAmount = this.formatCurrency(amount);
-                ctx.fillText(formattedAmount, textX, textY + 6);
+                // 금액 표시 (실제 원래 금액 사용)
+                ctx.font = `bold ${smallFontSize}px Arial`;
+                const originalAmount = categoryTotals[category]; // 조정되지 않은 실제 금액
+                const formattedAmount = this.formatCurrency(originalAmount);
+                ctx.fillText(formattedAmount, textX, textY + textSpacing);
 
                 // 그림자 효과 초기화
                 ctx.shadowColor = 'transparent';

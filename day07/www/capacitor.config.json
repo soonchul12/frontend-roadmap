@@ -1,7 +1,7 @@
 {
   "appId": "com.moneytracker.app",
   "appName": "MoneyTracker",
-  "webDir": ".",
+  "webDir": "www",
   "bundledWebRuntime": false,
   "plugins": {
     "SplashScreen": {

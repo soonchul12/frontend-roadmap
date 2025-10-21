@@ -6,7 +6,6 @@ class AnalysisPage {
     }
 
     init() {
-        console.log('분석 페이지 초기화');
         this.loadAnalysis();
     }
 
@@ -18,38 +17,23 @@ class AnalysisPage {
 
     // 분석 데이터 로드
     loadAnalysis() {
-        console.log('분석 데이터 로드 시작');
-        console.log('거래 데이터 개수:', this.transactions.length);
-        
-        try {
-            this.drawMonthlyTrendChart();
-            this.loadCategoryAnalysis();
-            this.drawSpendingPatterns();
-            this.loadBudgetAnalysis();
-            this.loadIncomeExpenseAnalysis();
-            this.loadGoalTracking();
-            this.loadInsights();
-            console.log('분석 데이터 로드 완료');
-        } catch (error) {
-            console.error('분석 데이터 로드 중 오류:', error);
-        }
+        this.drawMonthlyTrendChart();
+        this.loadCategoryAnalysis();
+        this.drawSpendingPatterns();
+        this.loadBudgetAnalysis();
+        this.loadIncomeExpenseAnalysis();
+        this.loadGoalTracking();
+        this.loadInsights();
     }
 
     // 월별 지출 트렌드 차트
     drawMonthlyTrendChart() {
         const canvas = document.getElementById('monthlyTrendCanvas');
-        if (!canvas) {
-            console.log('월별 트렌드 캔버스를 찾을 수 없습니다');
-            return;
-        }
+        if (!canvas) return;
 
-        console.log('월별 트렌드 차트 그리기 시작');
         const ctx = canvas.getContext('2d');
         const monthlyData = this.getMonthlyData();
         
-        console.log('월별 데이터:', monthlyData);
-        
-        // 차트 그리기 로직
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         if (monthlyData.length === 0) {
@@ -57,7 +41,6 @@ class AnalysisPage {
             ctx.font = '14px Arial';
             ctx.textAlign = 'center';
             ctx.fillText('데이터가 없습니다', canvas.width / 2, canvas.height / 2);
-            console.log('월별 데이터가 없어서 메시지 표시');
             return;
         }
 
@@ -102,8 +85,6 @@ class AnalysisPage {
             ctx.font = '11px Arial';
             ctx.fillText(data.month, x + barWidth/2, canvas.height - 20);
         });
-        
-        console.log('월별 트렌드 차트 그리기 완료');
     }
 
     // 월별 데이터 생성
@@ -130,15 +111,9 @@ class AnalysisPage {
     // 카테고리별 분석
     loadCategoryAnalysis() {
         const container = document.getElementById('categoryAnalysisGrid');
-        if (!container) {
-            console.log('카테고리 분석 컨테이너를 찾을 수 없습니다');
-            return;
-        }
+        if (!container) return;
 
-        console.log('카테고리 분석 로드 시작');
         const categoryTotals = this.getCategoryTotals('expense');
-        console.log('카테고리별 총액:', categoryTotals);
-        
         container.innerHTML = '';
         
         Object.entries(categoryTotals).forEach(([category, amount]) => {
@@ -150,8 +125,6 @@ class AnalysisPage {
             `;
             container.appendChild(categoryDiv);
         });
-        
-        console.log('카테고리 분석 로드 완료');
     }
 
     // 카테고리별 총액 계산

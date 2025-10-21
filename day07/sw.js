@@ -1,4 +1,4 @@
-const CACHE_NAME = 'money-tracker-v1';
+const CACHE_NAME = 'money-tracker-v4';
 const urlsToCache = [
     './',
     './index.html',
@@ -20,12 +20,20 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// 페치 이벤트
+// 페치 이벤트 - 캐시 우회하고 항상 네트워크에서 가져오기
 self.addEventListener('fetch', (event) => {
+    // CSS, JS 파일은 항상 네트워크에서 가져오기
+    if (event.request.url.includes('.css') || 
+        event.request.url.includes('.js') || 
+        event.request.url.includes('?v=')) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+    
+    // 다른 파일들은 캐시 사용
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
-                // 캐시에서 찾으면 반환
                 if (response) {
                     return response;
                 }

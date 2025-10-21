@@ -852,16 +852,19 @@ class MoneyTracker {
         document.getElementById('loadingOverlay').classList.remove('show');
     }
 
-    // Service Worker 설정
+    // Service Worker 설정 - 개발 중 캐시 문제 방지를 위해 비활성화
     setupServiceWorker() {
+        // Service Worker 비활성화
+        console.log('Service Worker 비활성화됨 - 개발 모드');
+        
+        // 기존 Service Worker 제거
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(registration => {
-                    console.log('Service Worker 등록 성공:', registration);
-                })
-                .catch(error => {
-                    console.log('Service Worker 등록 실패:', error);
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(registration => {
+                    registration.unregister();
+                    console.log('기존 Service Worker 제거됨');
                 });
+            });
         }
     }
 

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>MoneyTracker - 목표</title>
+    <link rel="stylesheet" href="./styles.css?v=202410192600&t=3333333333">
+    <link rel="stylesheet" href="./goals.css?v=202410192600&t=3333333333">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512x512.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <h1>🎯 목표</h1>
+            <button class="back-btn" onclick="goBack()">← 뒤로</button>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <h2>🎯 목표 관리</h2>
+            <p>저축 목표와 예산을 설정하고 관리하세요.</p>
+
+            <!-- 저축 목표 섹션 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>💰 저축 목표</h3>
+                    <button class="btn-primary" onclick="showAddGoalModal()">+ 목표 추가</button>
+                </div>
+                <div id="savingsGoalsList" class="goals-list">
+                    <!-- 저축 목표들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 월별 예산 섹션 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>📊 월별 예산</h3>
+                    <button class="btn-primary" onclick="showAddBudgetModal()">+ 예산 설정</button>
+                </div>
+                <div id="budgetList" class="budget-list">
+                    <!-- 월별 예산들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 습관 목표 섹션 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>✅ 습관 목표</h3>
+                    <button class="btn-primary" onclick="showAddHabitModal()">+ 습관 추가</button>
+                </div>
+                <div id="habitGoalsList" class="habits-list">
+                    <!-- 습관 목표들이 여기에 동적으로 추가됩니다 -->
+                </div>
+            </div>
+
+            <!-- 목표 추천 섹션 -->
+            <div class="card">
+                <h3>💡 목표 추천</h3>
+                <div id="goalRecommendations" class="recommendations">
+                    <!-- 추천 목표들이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="window.location.href='./index.html'">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">홈</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./index.html#transactions'">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">거래내역</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./analysis.html'">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">분석</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-label">목표</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- 저축 목표 추가 모달 -->
+    <div id="addGoalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💰 저축 목표 추가</h3>
+                <button class="close-btn" onclick="closeModal('addGoalModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>목표명</label>
+                    <input type="text" id="goalName" placeholder="예: 자동차 구매">
+                </div>
+                <div class="form-group">
+                    <label>목표 금액</label>
+                    <input type="number" id="goalAmount" placeholder="30000000">
+                </div>
+                <div class="form-group">
+                    <label>현재 저축액</label>
+                    <input type="number" id="currentAmount" placeholder="5000000">
+                </div>
+                <div class="form-group">
+                    <label>목표 달성일</label>
+                    <input type="date" id="targetDate">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addGoalModal')">취소</button>
+                <button class="btn-primary" onclick="addSavingsGoal()">추가</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 월별 예산 추가 모달 -->
+    <div id="addBudgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📊 월별 예산 설정</h3>
+                <button class="close-btn" onclick="closeModal('addBudgetModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>카테고리</label>
+                    <select id="budgetCategory">
+                        <option value="식비">식비</option>
+                        <option value="교통비">교통비</option>
+                        <option value="쇼핑">쇼핑</option>
+                        <option value="통신비">통신비</option>
+                        <option value="의료비">의료비</option>
+                        <option value="교육비">교육비</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>월 예산</label>
+                    <input type="number" id="budgetAmount" placeholder="500000">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addBudgetModal')">취소</button>
+                <button class="btn-primary" onclick="addBudget()">설정</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 습관 목표 추가 모달 -->
+    <div id="addHabitModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>✅ 습관 목표 추가</h3>
+                <button class="close-btn" onclick="closeModal('addHabitModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>습관명</label>
+                    <input type="text" id="habitName" placeholder="예: 하루 커피 2잔 이하">
+                </div>
+                <div class="form-group">
+                    <label>목표 주기</label>
+                    <select id="habitPeriod">
+                        <option value="daily">일일</option>
+                        <option value="weekly">주간</option>
+                        <option value="monthly">월간</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>목표 횟수</label>
+                    <input type="number" id="habitTarget" placeholder="2" min="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('addHabitModal')">취소</button>
+                <button class="btn-primary" onclick="addHabitGoal()">추가</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./goals.js?v=202410192400&t=1111111111"></script>
+    <script>
+        function goBack() {
+            window.location.href = './index.html';
+        }
+    </script>
+</body>
+</html>

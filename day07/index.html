@@ -9,6 +9,7 @@
     <!-- PWA 설정 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MoneyTracker">
@@ -121,7 +122,7 @@
                 <span class="nav-icon">📋</span>
                 <span class="nav-label">거래내역</span>
             </button>
-            <button class="nav-item" data-tab="analytics">
+            <button class="nav-item" onclick="window.location.href='./analysis.html'">
                 <span class="nav-icon">📊</span>
                 <span class="nav-label">분석</span>
             </button>
@@ -292,6 +293,93 @@
                         <p>스마트 가계부 v1.0.0</p>
                         <p>당신의 돈 관리를 더 스마트하게</p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 분석 페이지 -->
+        <div id="analysisPage" class="page" style="display: none;">
+            <div class="main-content">
+                <h2>📊 분석 페이지</h2>
+                <p>지출 분석 및 통계를 확인할 수 있습니다.</p>
+                
+                <!-- 월별 지출 트렌드 -->
+                <div class="card">
+                    <h3>📈 월별 지출 트렌드</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyTrendCanvas" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- 카테고리별 분석 -->
+                <div class="card">
+                    <h3>📊 카테고리별 분석</h3>
+                    <div id="categoryAnalysisGrid">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 지출 패턴 -->
+                <div class="card">
+                    <h3>🕐 지출 패턴</h3>
+                    <div class="pattern-charts">
+                        <div class="pattern-chart">
+                            <h4>요일별 지출</h4>
+                            <canvas id="weeklyPatternCanvas" width="300" height="150"></canvas>
+                        </div>
+                        <div class="pattern-chart">
+                            <h4>시간대별 지출</h4>
+                            <canvas id="hourlyPatternCanvas" width="300" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 예산 분석 -->
+                <div class="card">
+                    <h3>💰 예산 분석</h3>
+                    <div id="budgetAnalysis">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 수입 대비 지출 -->
+                <div class="card">
+                    <h3>📈 수입 대비 지출</h3>
+                    <div id="incomeExpenseAnalysis">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 목표 달성 -->
+                <div class="card">
+                    <h3>🎯 목표 달성</h3>
+                    <div id="goalTracking">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+
+                <!-- 인사이트 -->
+                <div class="card">
+                    <h3>💡 지출 인사이트</h3>
+                    <div id="insightsContainer">
+                        <!-- 동적으로 생성됨 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 목표 페이지 -->
+        <div id="goalsPage" class="page">
+            <div class="goals-container">
+                <h3>🎯 목표 설정</h3>
+                <div class="goal-form">
+                    <input type="text" id="goalTitle" placeholder="목표 제목 (예: 여행 자금)">
+                    <input type="number" id="goalAmount" placeholder="목표 금액">
+                    <input type="date" id="goalDeadline" placeholder="목표 날짜">
+                    <button id="addGoalBtn">목표 추가</button>
+                </div>
+                <div class="goals-list" id="goalsList">
+                    <!-- 동적으로 생성됨 -->
                 </div>
             </div>
         </div>

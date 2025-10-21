@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>MoneyTracker - 분석</title>
+    <link rel="stylesheet" href="./styles.css?v=202410191900&t=123456789">
+    <style>
+        /* 임시 인라인 CSS - 캐시 문제 해결용 */
+        .app-container { max-width: 480px; margin: 0 auto; background: #f5f5f5; min-height: 100vh; }
+        .app-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .app-header h1 { margin: 0; font-size: 24px; }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; }
+        .main-content { padding: 20px; padding-bottom: 100px; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0 0 15px 0; color: #333; font-size: 18px; }
+        .chart-container { text-align: center; }
+        canvas { max-width: 100%; height: auto; }
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; display: flex; justify-content: space-around; padding: 15px 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 100; }
+        .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 8px; }
+        .nav-item.active { color: #667eea; }
+        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        .nav-label { font-size: 12px; }
+        .pattern-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pattern-chart { text-align: center; }
+        .pattern-chart h4 { margin: 0 0 10px 0; font-size: 14px; color: #666; }
+        .category-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .category-item:last-child { border-bottom: none; }
+        .category-name { font-weight: 500; }
+        .category-amount { color: #667eea; font-weight: 600; }
+        .budget-item, .ratio-item { display: flex; justify-content: space-between; padding: 8px 0; }
+        .budget-amount.expense { color: #e74c3c; }
+        .budget-amount.income { color: #27ae60; }
+        .insight-card { display: flex; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px; }
+        .insight-icon { font-size: 24px; margin-right: 15px; }
+        .insight-content h4 { margin: 0 0 5px 0; font-size: 16px; }
+        .insight-content p { margin: 0; color: #666; font-size: 14px; }
+        .btn-primary { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+    </style>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512x512.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <h1>📊 분석</h1>
+            <button class="back-btn" onclick="goBack()">← 뒤로</button>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <h2>📊 지출 분석</h2>
+            <p>지출 패턴과 통계를 확인할 수 있습니다.</p>
+            
+            <!-- 월별 지출 트렌드 -->
+            <div class="card">
+                <h3>📈 월별 지출 트렌드</h3>
+                <div class="chart-container">
+                    <canvas id="monthlyTrendCanvas" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- 카테고리별 분석 -->
+            <div class="card">
+                <h3>📊 카테고리별 분석</h3>
+                <div id="categoryAnalysisGrid">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 지출 패턴 -->
+            <div class="card">
+                <h3>🕐 지출 패턴</h3>
+                <div class="pattern-charts">
+                    <div class="pattern-chart">
+                        <h4>요일별 지출</h4>
+                        <canvas id="weeklyPatternCanvas" width="300" height="150"></canvas>
+                    </div>
+                    <div class="pattern-chart">
+                        <h4>시간대별 지출</h4>
+                        <canvas id="hourlyPatternCanvas" width="300" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예산 분석 -->
+            <div class="card">
+                <h3>💰 예산 분석</h3>
+                <div id="budgetAnalysis">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 수입 대비 지출 -->
+            <div class="card">
+                <h3>📈 수입 대비 지출</h3>
+                <div id="incomeExpenseAnalysis">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 목표 달성 -->
+            <div class="card">
+                <h3>🎯 목표 달성</h3>
+                <div id="goalTracking">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 인사이트 -->
+            <div class="card">
+                <h3>💡 지출 인사이트</h3>
+                <div id="insightsContainer">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="window.location.href='./index.html'">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">홈</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./index.html#transactions'">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">거래내역</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">분석</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./index.html#goals'">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-label">목표</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="./analysis.js?v=202410191900&t=123456789"></script>
+    <script>
+        // 뒤로가기 함수
+        function goBack() {
+            window.location.href = './index.html';
+        }
+    </script>
+</body>
+</html>

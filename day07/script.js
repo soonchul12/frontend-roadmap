@@ -13,6 +13,10 @@ class MoneyTracker {
         this.updateDashboard();
         this.applyTheme();
         this.setupServiceWorker();
+        this.setupNavigation();
+        
+        // 기본적으로 대시보드 페이지 표시
+        this.showPage('dashboard');
     }
 
     // 기본 카테고리 설정
@@ -444,7 +448,7 @@ class MoneyTracker {
         const radius = size / 2 - 20; // 여백 고려
 
         let currentAngle = 0;
-        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+        const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#E74C3C', '#3498DB', '#F39C12', '#27AE60', '#9B59B6', '#E67E22', '#1ABC9C', '#34495E', '#E91E63', '#00BCD4', '#FF9800', '#8BC34A', '#673AB7', '#795548'];
 
         Object.entries(adjustedCategories).forEach(([category, amount], index) => {
             const sliceAngle = (amount / total) * 2 * Math.PI;
@@ -509,6 +513,20 @@ class MoneyTracker {
         return this.transactions
             .filter(t => t.type === type)
             .reduce((sum, t) => sum + t.amount, 0);
+    }
+
+    getCategoryTotals(type) {
+        const totals = {};
+        this.transactions
+            .filter(t => t.type === type)
+            .forEach(t => {
+                if (totals[t.category]) {
+                    totals[t.category] += t.amount;
+                } else {
+                    totals[t.category] = t.amount;
+                }
+            });
+        return totals;
     }
 
     getTypeLabel(type) {
@@ -845,6 +863,610 @@ class MoneyTracker {
                     console.log('Service Worker 등록 실패:', error);
                 });
         }
+    }
+
+    // 네비게이션 설정
+    setupNavigation() {
+        const navItems = document.querySelectorAll('.nav-item');
+        console.log('네비게이션 아이템 개수:', navItems.length);
+        
+        navItems.forEach((item, index) => {
+            console.log(`네비게이션 아이템 ${index}:`, item.getAttribute('data-tab'));
+            item.addEventListener('click', () => {
+                const tab = item.getAttribute('data-tab');
+                console.log('클릭된 탭:', tab);
+                this.showPage(tab);
+            });
+        });
+    }
+
+    // 페이지 표시 함수
+    showPage(pageId) {
+        console.log('showPage 호출됨:', pageId);
+        
+        // 모든 페이지 숨기기
+        document.querySelectorAll('.page').forEach(page => {
+            page.style.display = 'none';
+        });
+        
+        // 네비게이션 활성화 상태 업데이트
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // 선택된 네비게이션 아이템 활성화
+        const activeNavItem = document.querySelector(`[data-tab="${pageId}"]`);
+        if (activeNavItem) {
+            activeNavItem.classList.add('active');
+            console.log('네비게이션 아이템 활성화됨:', pageId);
+        }
+        
+        // 페이지별 데이터 로드
+        if (pageId === 'dashboard') {
+            this.updateDashboard();
+        } else if (pageId === 'transactions') {
+            this.loadTransactions();
+        } else if (pageId === 'analytics') {
+            console.log('분석 페이지 로드 시작');
+            this.loadAnalysis();
+        } else if (pageId === 'goals') {
+            this.loadGoals();
+        }
+        
+        // 선택된 페이지 표시 (analytics는 analysisPage로 매핑)
+        const pageIdMapping = {
+            'dashboard': 'dashboardPage',
+            'transactions': 'transactionsPage', 
+            'analytics': 'analysisPage',
+            'goals': 'goalsPage'
+        };
+        const targetPageId = pageIdMapping[pageId] || pageId + 'Page';
+        const targetPage = document.getElementById(targetPageId);
+        console.log('대상 페이지:', targetPageId, targetPage);
+        
+        if (targetPage) {
+            // 강제로 페이지 표시
+            targetPage.style.display = 'block';
+            targetPage.style.visibility = 'visible';
+            targetPage.style.opacity = '1';
+            console.log('페이지 표시됨:', pageId);
+            console.log('페이지 스타일:', targetPage.style.display);
+        } else {
+            console.error('페이지를 찾을 수 없음:', targetPageId);
+        }
+    }
+
+    // 분석 페이지 로드
+    loadAnalysis() {
+        console.log('분석 페이지 로드 시작');
+        console.log('거래 데이터 개수:', this.transactions.length);
+        
+        try {
+            console.log('월별 트렌드 차트 그리기 시작');
+            this.drawMonthlyTrendChart();
+            console.log('월별 트렌드 차트 완료');
+            
+            console.log('카테고리 분석 로드 시작');
+            this.loadCategoryAnalysis();
+            console.log('카테고리 분석 완료');
+            
+            console.log('지출 패턴 분석 시작');
+            this.drawSpendingPatterns();
+            console.log('지출 패턴 분석 완료');
+            
+            console.log('예산 분석 로드 시작');
+            this.loadBudgetAnalysis();
+            console.log('예산 분석 완료');
+            
+            console.log('수입 대비 지출 분석 시작');
+            this.loadIncomeExpenseAnalysis();
+            console.log('수입 대비 지출 분석 완료');
+            
+            console.log('목표 달성 현황 로드 시작');
+            this.loadGoalTracking();
+            console.log('목표 달성 현황 완료');
+            
+            console.log('인사이트 로드 시작');
+            this.loadInsights();
+            console.log('인사이트 완료');
+            
+            console.log('분석 페이지 로드 완료');
+        } catch (error) {
+            console.error('분석 페이지 로드 중 오류:', error);
+        }
+    }
+
+    // 월별 지출 트렌드 차트
+    drawMonthlyTrendChart() {
+        const canvas = document.getElementById('monthlyTrendCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // 최근 6개월 데이터 생성
+        const months = [];
+        const expenses = [];
+        const currentDate = new Date();
+        
+        for (let i = 5; i >= 0; i--) {
+            const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+            months.push(date.toLocaleDateString('ko-KR', { month: 'short' }));
+            
+            // 해당 월의 지출 계산
+            const monthExpenses = this.transactions
+                .filter(t => t.type === 'expense' && 
+                    new Date(t.date).getMonth() === date.getMonth() &&
+                    new Date(t.date).getFullYear() === date.getFullYear())
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            expenses.push(monthExpenses);
+        }
+
+        // 차트 그리기
+        ctx.clearRect(0, 0, width, height);
+        
+        const padding = 40;
+        const chartWidth = width - padding * 2;
+        const chartHeight = height - padding * 2;
+        
+        const maxExpense = Math.max(...expenses, 1000000); // 최소값 설정
+        
+        // 격자 그리기
+        ctx.strokeStyle = '#e0e0e0';
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+            const y = padding + (chartHeight / 5) * i;
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(width - padding, y);
+            ctx.stroke();
+        }
+
+        // 데이터 라인 그리기
+        ctx.strokeStyle = '#667eea';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        
+        expenses.forEach((expense, index) => {
+            const x = padding + (chartWidth / (expenses.length - 1)) * index;
+            const y = padding + chartHeight - (expense / maxExpense) * chartHeight;
+            
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+
+        // 데이터 포인트 그리기
+        ctx.fillStyle = '#667eea';
+        expenses.forEach((expense, index) => {
+            const x = padding + (chartWidth / (expenses.length - 1)) * index;
+            const y = padding + chartHeight - (expense / maxExpense) * chartHeight;
+            
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+
+        // 월 라벨 그리기
+        ctx.fillStyle = '#666';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        months.forEach((month, index) => {
+            const x = padding + (chartWidth / (months.length - 1)) * index;
+            ctx.fillText(month, x, height - 10);
+        });
+
+        // 금액 라벨 그리기
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i <= 5; i++) {
+            const value = (maxExpense / 5) * (5 - i);
+            const y = padding + (chartHeight / 5) * i;
+            ctx.fillText(this.formatCurrency(value), padding - 10, y);
+        }
+    }
+
+    // 카테고리별 상세 분석
+    loadCategoryAnalysis() {
+        const container = document.getElementById('categoryAnalysisGrid');
+        if (!container) return;
+
+        const categoryTotals = this.getCategoryTotals('expense');
+        container.innerHTML = '';
+
+        Object.entries(categoryTotals).forEach(([category, amount]) => {
+            const transactions = this.transactions.filter(t => 
+                t.type === 'expense' && t.category === category
+            );
+            
+            const avgAmount = transactions.length > 0 ? amount / transactions.length : 0;
+            const lastMonthAmount = this.getLastMonthCategoryAmount(category);
+            const changePercent = lastMonthAmount > 0 ? 
+                ((amount - lastMonthAmount) / lastMonthAmount * 100) : 0;
+
+            const item = document.createElement('div');
+            item.className = 'category-analysis-item';
+            item.innerHTML = `
+                <h4>${category}</h4>
+                <div class="analysis-metric">
+                    <span class="label">총 지출</span>
+                    <span class="value">${this.formatCurrency(amount)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">평균 지출</span>
+                    <span class="value">${this.formatCurrency(avgAmount)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">거래 횟수</span>
+                    <span class="value">${transactions.length}회</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">전월 대비</span>
+                    <span class="value ${changePercent >= 0 ? 'negative' : 'positive'}">
+                        ${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(1)}%
+                    </span>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    // 지출 패턴 분석 (요일별, 시간대별)
+    drawSpendingPatterns() {
+        this.drawWeeklyPattern();
+        this.drawHourlyPattern();
+    }
+
+    // 요일별 지출 패턴
+    drawWeeklyPattern() {
+        const canvas = document.getElementById('weeklyPatternCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        const dayExpenses = [0, 0, 0, 0, 0, 0, 0];
+
+        this.transactions.filter(t => t.type === 'expense').forEach(t => {
+            const day = new Date(t.date).getDay();
+            dayExpenses[day] += t.amount;
+        });
+
+        const maxExpense = Math.max(...dayExpenses, 100000);
+
+        ctx.clearRect(0, 0, width, height);
+        
+        const barWidth = width / 7 - 10;
+        const maxBarHeight = height - 40;
+
+        dayExpenses.forEach((expense, index) => {
+            const barHeight = (expense / maxExpense) * maxBarHeight;
+            const x = index * (width / 7) + 5;
+            const y = height - barHeight - 20;
+
+            // 바 그리기
+            ctx.fillStyle = '#667eea';
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // 요일 라벨
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(days[index], x + barWidth / 2, height - 5);
+        });
+    }
+
+    // 시간대별 지출 패턴
+    drawHourlyPattern() {
+        const canvas = document.getElementById('hourlyPatternCanvas');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        const hourlyExpenses = new Array(24).fill(0);
+
+        this.transactions.filter(t => t.type === 'expense').forEach(t => {
+            const hour = new Date(t.date).getHours();
+            hourlyExpenses[hour] += t.amount;
+        });
+
+        const maxExpense = Math.max(...hourlyExpenses, 100000);
+
+        ctx.clearRect(0, 0, width, height);
+        
+        const barWidth = width / 24 - 2;
+        const maxBarHeight = height - 40;
+
+        hourlyExpenses.forEach((expense, index) => {
+            const barHeight = (expense / maxExpense) * maxBarHeight;
+            const x = index * (width / 24) + 1;
+            const y = height - barHeight - 20;
+
+            // 바 그리기
+            ctx.fillStyle = '#4BC0C0';
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // 시간 라벨 (4시간마다)
+            if (index % 4 === 0) {
+                ctx.fillStyle = '#666';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${index}시`, x + barWidth / 2, height - 5);
+            }
+        });
+    }
+
+    // 예산 대비 분석
+    loadBudgetAnalysis() {
+        const container = document.getElementById('budgetAnalysis');
+        if (!container) return;
+
+        // 기본 예산 설정 (실제로는 사용자가 설정할 수 있도록 해야 함)
+        const budgets = {
+            '식비': 500000,
+            '교통비': 100000,
+            '쇼핑': 200000,
+            '주거비': 800000,
+            '교육비': 100000,
+            '기타지출': 50000
+        };
+
+        const categoryTotals = this.getCategoryTotals('expense');
+        container.innerHTML = '';
+
+        Object.entries(budgets).forEach(([category, budget]) => {
+            const spent = categoryTotals[category] || 0;
+            const percentage = (spent / budget) * 100;
+            const remaining = budget - spent;
+
+            const item = document.createElement('div');
+            item.className = 'budget-item';
+            item.innerHTML = `
+                <h4>${category}</h4>
+                <div class="budget-progress">
+                    <div class="budget-progress-bar" style="width: ${Math.min(percentage, 100)}%"></div>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">예산</span>
+                    <span class="value">${this.formatCurrency(budget)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">지출</span>
+                    <span class="value">${this.formatCurrency(spent)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">잔여</span>
+                    <span class="value ${remaining >= 0 ? 'positive' : 'negative'}">
+                        ${this.formatCurrency(remaining)}
+                    </span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">사용률</span>
+                    <span class="value ${percentage <= 80 ? 'positive' : percentage <= 100 ? 'value' : 'negative'}">
+                        ${percentage.toFixed(1)}%
+                    </span>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    // 수입 대비 지출 분석
+    loadIncomeExpenseAnalysis() {
+        const container = document.getElementById('incomeExpenseAnalysis');
+        if (!container) return;
+
+        const totalIncome = this.getTotalAmount('income');
+        const totalExpense = this.getTotalAmount('expense');
+        const netIncome = totalIncome - totalExpense;
+        const expenseRatio = totalIncome > 0 ? (totalExpense / totalIncome) * 100 : 0;
+
+        container.innerHTML = `
+            <div class="income-expense-item">
+                <h4>수입 대비 지출 비율</h4>
+                <div class="budget-progress">
+                    <div class="budget-progress-bar" style="width: ${Math.min(expenseRatio, 100)}%"></div>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">지출 비율</span>
+                    <span class="value ${expenseRatio <= 70 ? 'positive' : expenseRatio <= 90 ? 'value' : 'negative'}">
+                        ${expenseRatio.toFixed(1)}%
+                    </span>
+                </div>
+            </div>
+            <div class="income-expense-item">
+                <h4>저축률</h4>
+                <div class="analysis-metric">
+                    <span class="label">저축률</span>
+                    <span class="value ${netIncome >= 0 ? 'positive' : 'negative'}">
+                        ${totalIncome > 0 ? ((netIncome / totalIncome) * 100).toFixed(1) : 0}%
+                    </span>
+                </div>
+            </div>
+            <div class="income-expense-item">
+                <h4>월간 순이익</h4>
+                <div class="analysis-metric">
+                    <span class="label">순이익</span>
+                    <span class="value ${netIncome >= 0 ? 'positive' : 'negative'}">
+                        ${this.formatCurrency(netIncome)}
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+
+    // 목표 달성 현황
+    loadGoalTracking() {
+        const container = document.getElementById('goalTracking');
+        if (!container) return;
+
+        // 기본 목표 설정 (실제로는 사용자가 설정할 수 있도록 해야 함)
+        const goals = [
+            { title: '월 저축 목표', target: 500000, current: this.getTotalAmount('income') - this.getTotalAmount('expense') },
+            { title: '여행 자금', target: 2000000, current: 500000 },
+            { title: '비상금', target: 1000000, current: 300000 }
+        ];
+
+        container.innerHTML = '';
+
+        goals.forEach(goal => {
+            const percentage = Math.min((goal.current / goal.target) * 100, 100);
+            const remaining = goal.target - goal.current;
+
+            const item = document.createElement('div');
+            item.className = 'goal-item';
+            item.innerHTML = `
+                <h4>${goal.title}</h4>
+                <div class="goal-progress">
+                    <div class="goal-progress-bar" style="width: ${percentage}%"></div>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">목표</span>
+                    <span class="value">${this.formatCurrency(goal.target)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">현재</span>
+                    <span class="value">${this.formatCurrency(goal.current)}</span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">잔여</span>
+                    <span class="value ${remaining >= 0 ? 'positive' : 'negative'}">
+                        ${this.formatCurrency(remaining)}
+                    </span>
+                </div>
+                <div class="analysis-metric">
+                    <span class="label">달성률</span>
+                    <span class="value ${percentage >= 80 ? 'positive' : percentage >= 50 ? 'value' : 'negative'}">
+                        ${percentage.toFixed(1)}%
+                    </span>
+                </div>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    // 지출 인사이트
+    loadInsights() {
+        const container = document.getElementById('insightsContainer');
+        if (!container) return;
+
+        const insights = this.generateInsights();
+        container.innerHTML = '';
+
+        insights.forEach(insight => {
+            const card = document.createElement('div');
+            card.className = 'insight-card';
+            card.innerHTML = `
+                <h4>${insight.title}</h4>
+                <p>${insight.description}</p>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // 인사이트 생성
+    generateInsights() {
+        const insights = [];
+        const categoryTotals = this.getCategoryTotals('expense');
+        const totalExpense = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+
+        // 가장 큰 지출 카테고리
+        const maxCategory = Object.entries(categoryTotals).reduce((max, [category, amount]) => 
+            amount > max.amount ? { category, amount } : max, { category: '', amount: 0 });
+
+        if (maxCategory.amount > 0) {
+            const percentage = (maxCategory.amount / totalExpense) * 100;
+            insights.push({
+                title: '💡 주요 지출 카테고리',
+                description: `${maxCategory.category}이(가) 전체 지출의 ${percentage.toFixed(1)}%를 차지합니다. 이 카테고리의 지출을 검토해보세요.`
+            });
+        }
+
+        // 지출 증가 추세
+        const currentMonthExpense = this.getCurrentMonthExpense();
+        const lastMonthExpense = this.getLastMonthExpense();
+        
+        if (lastMonthExpense > 0) {
+            const changePercent = ((currentMonthExpense - lastMonthExpense) / lastMonthExpense) * 100;
+            if (changePercent > 10) {
+                insights.push({
+                    title: '📈 지출 증가 경고',
+                    description: `이번 달 지출이 지난달 대비 ${changePercent.toFixed(1)}% 증가했습니다. 지출을 줄일 수 있는 방법을 찾아보세요.`
+                });
+            } else if (changePercent < -10) {
+                insights.push({
+                    title: '📉 지출 절약 성과',
+                    description: `이번 달 지출이 지난달 대비 ${Math.abs(changePercent).toFixed(1)}% 절약되었습니다. 좋은 성과입니다!`
+                });
+            }
+        }
+
+        // 저축률 분석
+        const totalIncome = this.getTotalAmount('income');
+        const netIncome = totalIncome - totalExpense;
+        const savingsRate = totalIncome > 0 ? (netIncome / totalIncome) * 100 : 0;
+
+        if (savingsRate < 10) {
+            insights.push({
+                title: '💰 저축률 개선 필요',
+                description: `현재 저축률이 ${savingsRate.toFixed(1)}%입니다. 목표 저축률 20% 달성을 위해 지출을 줄여보세요.`
+            });
+        } else if (savingsRate >= 20) {
+            insights.push({
+                title: '🎉 우수한 저축률',
+                description: `현재 저축률이 ${savingsRate.toFixed(1)}%입니다. 훌륭한 재정 관리입니다!`
+            });
+        }
+
+        return insights;
+    }
+
+    // 유틸리티 함수들
+    getLastMonthCategoryAmount(category) {
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        
+        return this.transactions
+            .filter(t => t.type === 'expense' && 
+                t.category === category &&
+                new Date(t.date).getMonth() === lastMonth.getMonth() &&
+                new Date(t.date).getFullYear() === lastMonth.getFullYear())
+            .reduce((sum, t) => sum + t.amount, 0);
+    }
+
+    getCurrentMonthExpense() {
+        const currentDate = new Date();
+        return this.transactions
+            .filter(t => t.type === 'expense' &&
+                new Date(t.date).getMonth() === currentDate.getMonth() &&
+                new Date(t.date).getFullYear() === currentDate.getFullYear())
+            .reduce((sum, t) => sum + t.amount, 0);
+    }
+
+    getLastMonthExpense() {
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        
+        return this.transactions
+            .filter(t => t.type === 'expense' &&
+                new Date(t.date).getMonth() === lastMonth.getMonth() &&
+                new Date(t.date).getFullYear() === lastMonth.getFullYear())
+            .reduce((sum, t) => sum + t.amount, 0);
+    }
+
+    // 목표 페이지 로드
+    loadGoals() {
+        // 목표 관련 기능은 나중에 구현
+        console.log('목표 페이지 로드');
     }
 }
 

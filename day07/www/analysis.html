@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>MoneyTracker - 분석</title>
+    <link rel="stylesheet" href="./styles.css?v=202410213300&t=3333333333">
+    <link rel="stylesheet" href="./analysis.css?v=202410213300&t=3333333333">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512x512.png">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 헤더 -->
+        <header class="app-header">
+            <h1>📊 분석</h1>
+            <button class="back-btn" onclick="goBack()">← 뒤로</button>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <div class="main-content">
+            <h2>📊 지출 분석</h2>
+            <p>지출 패턴과 통계를 확인할 수 있습니다.</p>
+            
+            <!-- 월별 지출 트렌드 -->
+            <div class="card">
+                <h3>📈 월별 지출 트렌드</h3>
+                <div class="chart-container">
+                    <canvas id="monthlyTrendCanvas" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- 카테고리별 분석 -->
+            <div class="card">
+                <h3>📊 카테고리별 분석</h3>
+                <div id="categoryAnalysisGrid">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 지출 패턴 -->
+            <div class="card">
+                <h3>🕐 지출 패턴</h3>
+                <div class="pattern-charts">
+                    <div class="pattern-chart">
+                        <h4>요일별 지출</h4>
+                        <canvas id="weeklyPatternCanvas" width="300" height="150"></canvas>
+                    </div>
+                    <div class="pattern-chart">
+                        <h4>시간대별 지출</h4>
+                        <canvas id="hourlyPatternCanvas" width="300" height="150"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 예산 분석 -->
+            <div class="card">
+                <h3>💰 예산 분석</h3>
+                <div id="budgetAnalysis">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 수입 대비 지출 -->
+            <div class="card">
+                <h3>📈 수입 대비 지출</h3>
+                <div id="incomeExpenseAnalysis">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 목표 달성 -->
+            <div class="card">
+                <h3>🎯 목표 달성</h3>
+                <div id="goalTracking">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+
+            <!-- 인사이트 -->
+            <div class="card">
+                <h3>💡 지출 인사이트</h3>
+                <div id="insightsContainer">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <button class="nav-item" onclick="window.location.href='./index.html'">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">홈</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./index.html#transactions'">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">거래내역</span>
+            </button>
+            <button class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">분석</span>
+            </button>
+            <button class="nav-item" onclick="window.location.href='./index.html#goals'">
+                <span class="nav-icon">🎯</span>
+                <span class="nav-label">목표</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="./analysis.js?v=202410213300&t=3333333333"></script>
+    <script>
+        // 뒤로가기 함수
+        function goBack() {
+            window.location.href = './index.html';
+        }
+    </script>
+</body>
+</html>

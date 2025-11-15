@@ -1,0 +1,13 @@
+# 줄바꿈 문자 자동 처리
+* text=auto
+
+# Windows 배치 파일은 CRLF 유지
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Shell 스크립트는 LF 유지
+*.sh text eol=lf
+
+# Android Gradle 파일들
+android/** text=auto
+

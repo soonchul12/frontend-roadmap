@@ -9,6 +9,7 @@
     <!-- PWA 설정 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MoneyTracker">
@@ -17,7 +18,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192x192.png">
     <link rel="apple-touch-icon" href="./icons/icon-192x192.png">
     
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=202410213400&t=5555555555">
 </head>
 <body>
     <div class="app-container">
@@ -121,11 +122,11 @@
                 <span class="nav-icon">📋</span>
                 <span class="nav-label">거래내역</span>
             </button>
-            <button class="nav-item" data-tab="analytics">
+            <button class="nav-item" onclick="navigateToAnalysis()">
                 <span class="nav-icon">📊</span>
                 <span class="nav-label">분석</span>
             </button>
-            <button class="nav-item" data-tab="goals">
+            <button class="nav-item" onclick="navigateToGoals()">
                 <span class="nav-icon">🎯</span>
                 <span class="nav-label">목표</span>
             </button>
@@ -295,6 +296,22 @@
                 </div>
             </div>
         </div>
+
+        <!-- 목표 페이지 -->
+        <div id="goalsPage" class="page">
+            <div class="goals-container">
+                <h3>🎯 목표 설정</h3>
+                <div class="goal-form">
+                    <input type="text" id="goalTitle" placeholder="목표 제목 (예: 여행 자금)">
+                    <input type="number" id="goalAmount" placeholder="목표 금액">
+                    <input type="date" id="goalDeadline" placeholder="목표 날짜">
+                    <button id="addGoalBtn">목표 추가</button>
+                </div>
+                <div class="goals-list" id="goalsList">
+                    <!-- 동적으로 생성됨 -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 로딩 스피너 -->
@@ -307,6 +324,6 @@
         <span id="toastMessage"></span>
     </div>
 
-    <script src="./script.js"></script>
+    <script src="./script.js?v=202410213400&t=5555555555"></script>
 </body>
 </html>

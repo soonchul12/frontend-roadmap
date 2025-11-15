@@ -866,6 +866,59 @@ class MoneyTracker {
                 });
             });
         }
+        
+        // 캐시만 초기화 (데이터는 유지)
+        this.clearCacheOnly();
+    }
+
+    // 캐시만 초기화 (거래 데이터는 유지)
+    clearCacheOnly() {
+        // Session Storage 초기화 (임시 캐시)
+        sessionStorage.clear();
+        
+        // Cache API 초기화 (브라우저 캐시)
+        if ('caches' in window) {
+            caches.keys().then(cacheNames => {
+                cacheNames.forEach(cacheName => {
+                    caches.delete(cacheName);
+                });
+            });
+        }
+        
+        // CSS/JS 파일 캐시 무효화를 위한 타임스탬프 추가
+        this.addCacheBusting();
+        
+        // 강제 새로고침을 위한 플래그 설정
+        localStorage.setItem('moneyTracker_forceRefresh', Date.now().toString());
+        
+        console.log('캐시 초기화 완료 (데이터 유지)');
+        console.log('강제 새로고침 플래그 설정됨');
+    }
+
+    // 캐시 무효화를 위한 타임스탬프 추가
+    addCacheBusting() {
+        // 동적으로 CSS/JS 파일에 타임스탬프 추가
+        const timestamp = Date.now();
+        
+        // CSS 파일들에 타임스탬프 추가
+        const cssLinks = document.querySelectorAll('link[rel="stylesheet"]');
+        cssLinks.forEach(link => {
+            if (link.href.includes('.css')) {
+                const url = new URL(link.href);
+                url.searchParams.set('v', timestamp);
+                link.href = url.toString();
+            }
+        });
+        
+        // JS 파일들에 타임스탬프 추가
+        const jsScripts = document.querySelectorAll('script[src]');
+        jsScripts.forEach(script => {
+            if (script.src.includes('.js')) {
+                const url = new URL(script.src);
+                url.searchParams.set('v', timestamp);
+                script.src = url.toString();
+            }
+        });
     }
 
     // 네비게이션 설정
